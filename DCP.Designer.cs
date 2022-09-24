@@ -54,8 +54,11 @@ namespace DesktopCleanPlan
             this.DCPWeather = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPScreenshot = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPKyuu = new System.Windows.Forms.ToolStripMenuItem();
-            this.DCPAuthor = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPDrcomTool = new System.Windows.Forms.ToolStripMenuItem();
+            this.DCPCheckPower = new System.Windows.Forms.ToolStripMenuItem();
+            this.DCPLastPower = new System.Windows.Forms.ToolStripMenuItem();
+            this.DCPBindMyRoom = new System.Windows.Forms.ToolStripMenuItem();
+            this.DCPAuthor = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPExit = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -79,23 +82,24 @@ namespace DesktopCleanPlan
             this.DCPStyle,
             this.DCPStartup,
             this.DCPMaid,
+            this.DCPCheckPower,
             this.DCPDrcomTool,
             this.DCPAuthor,
             this.DCPExit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(237, 202);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(235, 224);
             // 
             // DCPHelp
             // 
             this.DCPHelp.Name = "DCPHelp";
-            this.DCPHelp.Size = new System.Drawing.Size(236, 22);
+            this.DCPHelp.Size = new System.Drawing.Size(234, 22);
             this.DCPHelp.Text = "☆我是谁我该干什么☆";
             this.DCPHelp.Click += new System.EventHandler(this.DCPHelp_Click);
             // 
             // DCPOption
             // 
             this.DCPOption.Name = "DCPOption";
-            this.DCPOption.Size = new System.Drawing.Size(236, 22);
+            this.DCPOption.Size = new System.Drawing.Size(234, 22);
             this.DCPOption.Text = "☆换个文件夹打开嗷☆";
             this.DCPOption.Click += new System.EventHandler(this.DCPOption_Click);
             // 
@@ -105,20 +109,20 @@ namespace DesktopCleanPlan
             this.DCPSimple,
             this.DCPEight});
             this.DCPStyle.Name = "DCPStyle";
-            this.DCPStyle.Size = new System.Drawing.Size(236, 22);
+            this.DCPStyle.Size = new System.Drawing.Size(234, 22);
             this.DCPStyle.Text = "☆太花哨了换个风格☆";
             // 
             // DCPSimple
             // 
             this.DCPSimple.Name = "DCPSimple";
-            this.DCPSimple.Size = new System.Drawing.Size(236, 22);
+            this.DCPSimple.Size = new System.Drawing.Size(234, 22);
             this.DCPSimple.Text = "简单明了";
             this.DCPSimple.Click += new System.EventHandler(this.DCPSimple_Click);
             // 
             // DCPEight
             // 
             this.DCPEight.Name = "DCPEight";
-            this.DCPEight.Size = new System.Drawing.Size(236, 22);
+            this.DCPEight.Size = new System.Drawing.Size(234, 22);
             this.DCPEight.Text = "☆大家都是八个字呢☆";
             this.DCPEight.Click += new System.EventHandler(this.DCPEight_Click);
             // 
@@ -128,20 +132,20 @@ namespace DesktopCleanPlan
             this.DCPYes,
             this.DCPNo});
             this.DCPStartup.Name = "DCPStartup";
-            this.DCPStartup.Size = new System.Drawing.Size(236, 22);
+            this.DCPStartup.Size = new System.Drawing.Size(234, 22);
             this.DCPStartup.Text = "☆要不开机自启动吧☆";
             // 
             // DCPYes
             // 
             this.DCPYes.Name = "DCPYes";
-            this.DCPYes.Size = new System.Drawing.Size(236, 22);
+            this.DCPYes.Size = new System.Drawing.Size(234, 22);
             this.DCPYes.Text = "☆我看行就这么办吧☆";
             this.DCPYes.Click += new System.EventHandler(this.DCPYes_Click);
             // 
             // DCPNo
             // 
             this.DCPNo.Name = "DCPNo";
-            this.DCPNo.Size = new System.Drawing.Size(236, 22);
+            this.DCPNo.Size = new System.Drawing.Size(234, 22);
             this.DCPNo.Text = "☆咱觉着大可不必嗷☆";
             this.DCPNo.Click += new System.EventHandler(this.DCPNo_Click);
             // 
@@ -161,111 +165,134 @@ namespace DesktopCleanPlan
             this.DCPScreenshot,
             this.DCPKyuu});
             this.DCPMaid.Name = "DCPMaid";
-            this.DCPMaid.Size = new System.Drawing.Size(236, 22);
+            this.DCPMaid.Size = new System.Drawing.Size(234, 22);
             this.DCPMaid.Text = "☆好像有个妹抖来着☆";
             // 
             // DCPRubbish
             // 
             this.DCPRubbish.Name = "DCPRubbish";
-            this.DCPRubbish.Size = new System.Drawing.Size(236, 22);
+            this.DCPRubbish.Size = new System.Drawing.Size(234, 22);
             this.DCPRubbish.Text = "☆帮我清空回收站吧☆";
             this.DCPRubbish.Click += new System.EventHandler(this.DCPRubbish_Click);
             // 
             // DCPUndo
             // 
             this.DCPUndo.Name = "DCPUndo";
-            this.DCPUndo.Size = new System.Drawing.Size(236, 22);
+            this.DCPUndo.Size = new System.Drawing.Size(234, 22);
             this.DCPUndo.Text = "☆爷刚刚丢错东西了☆";
             this.DCPUndo.Click += new System.EventHandler(this.DCPUndo_Click);
             // 
             // DCPControl
             // 
             this.DCPControl.Name = "DCPControl";
-            this.DCPControl.Size = new System.Drawing.Size(236, 22);
+            this.DCPControl.Size = new System.Drawing.Size(234, 22);
             this.DCPControl.Text = "☆控制面板在哪儿呢☆";
             this.DCPControl.Click += new System.EventHandler(this.DCPControl_Click);
             // 
             // DCPTask
             // 
             this.DCPTask.Name = "DCPTask";
-            this.DCPTask.Size = new System.Drawing.Size(236, 22);
+            this.DCPTask.Size = new System.Drawing.Size(234, 22);
             this.DCPTask.Text = "☆找不着任务管理器☆";
             this.DCPTask.Click += new System.EventHandler(this.DCPTask_Click);
             // 
             // DCPRegedit
             // 
             this.DCPRegedit.Name = "DCPRegedit";
-            this.DCPRegedit.Size = new System.Drawing.Size(236, 22);
+            this.DCPRegedit.Size = new System.Drawing.Size(234, 22);
             this.DCPRegedit.Text = "☆我自启动注册表捏☆";
             this.DCPRegedit.Click += new System.EventHandler(this.DCPRegedit_Click);
             // 
             // DCPProperty
             // 
             this.DCPProperty.Name = "DCPProperty";
-            this.DCPProperty.Size = new System.Drawing.Size(236, 22);
+            this.DCPProperty.Size = new System.Drawing.Size(234, 22);
             this.DCPProperty.Text = "☆电脑属性在哪儿看☆";
             this.DCPProperty.Click += new System.EventHandler(this.DCPProperty_Click);
             // 
             // DCPRickRoll
             // 
             this.DCPRickRoll.Name = "DCPRickRoll";
-            this.DCPRickRoll.Size = new System.Drawing.Size(236, 22);
+            this.DCPRickRoll.Size = new System.Drawing.Size(234, 22);
             this.DCPRickRoll.Text = "☆？？？？？？？？☆";
             this.DCPRickRoll.Click += new System.EventHandler(this.DCPRickRoll_Click);
             // 
             // DCPIpv4
             // 
             this.DCPIpv4.Name = "DCPIpv4";
-            this.DCPIpv4.Size = new System.Drawing.Size(236, 22);
+            this.DCPIpv4.Size = new System.Drawing.Size(234, 22);
             this.DCPIpv4.Text = "☆咱的ipv4地址是啥☆";
             this.DCPIpv4.Click += new System.EventHandler(this.DCPIpv4_Click);
             // 
             // DCPIpv6
             // 
             this.DCPIpv6.Name = "DCPIpv6";
-            this.DCPIpv6.Size = new System.Drawing.Size(236, 22);
+            this.DCPIpv6.Size = new System.Drawing.Size(234, 22);
             this.DCPIpv6.Text = "☆顺便查查ipv6地址☆";
             this.DCPIpv6.Click += new System.EventHandler(this.DCPIpv6_Click);
             // 
             // DCPWeather
             // 
             this.DCPWeather.Name = "DCPWeather";
-            this.DCPWeather.Size = new System.Drawing.Size(236, 22);
+            this.DCPWeather.Size = new System.Drawing.Size(234, 22);
             this.DCPWeather.Text = "☆这外面天气咋样啊☆";
             this.DCPWeather.Click += new System.EventHandler(this.DCPWeather_Click);
             // 
             // DCPScreenshot
             // 
             this.DCPScreenshot.Name = "DCPScreenshot";
-            this.DCPScreenshot.Size = new System.Drawing.Size(236, 22);
+            this.DCPScreenshot.Size = new System.Drawing.Size(234, 22);
             this.DCPScreenshot.Text = "☆自带截图工具在哪☆";
             this.DCPScreenshot.Click += new System.EventHandler(this.DCPScreenshot_Click);
             // 
             // DCPKyuu
             // 
             this.DCPKyuu.Name = "DCPKyuu";
-            this.DCPKyuu.Size = new System.Drawing.Size(236, 22);
+            this.DCPKyuu.Size = new System.Drawing.Size(234, 22);
             this.DCPKyuu.Text = "☆琪露诺的算数教室☆";
             this.DCPKyuu.Click += new System.EventHandler(this.DCPKyuu_Click);
-            // 
-            // DCPAuthor
-            // 
-            this.DCPAuthor.Name = "DCPAuthor";
-            this.DCPAuthor.Size = new System.Drawing.Size(236, 22);
-            this.DCPAuthor.Text = "☆哪个小天才设计的☆";
-            this.DCPAuthor.Click += new System.EventHandler(this.DCPAuthor_Click);
             // 
             // DCPDrcomTool
             // 
             this.DCPDrcomTool.Name = "DCPDrcomTool";
-            this.DCPDrcomTool.Size = new System.Drawing.Size(236, 22);
+            this.DCPDrcomTool.Size = new System.Drawing.Size(234, 22);
             this.DCPDrcomTool.Text = "☆深带人专用小工具☆";
             this.DCPDrcomTool.Click += new System.EventHandler(this.DCPDrcomTool_Click);
+            // 
+            // DCPCheckPower
+            // 
+            this.DCPCheckPower.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DCPLastPower,
+            this.DCPBindMyRoom});
+            this.DCPCheckPower.Name = "DCPCheckPower";
+            this.DCPCheckPower.Size = new System.Drawing.Size(234, 22);
+            this.DCPCheckPower.Text = "☆咱们家还有电用吗☆";
+            // 
+            // DCPLastPower
+            // 
+            this.DCPLastPower.Name = "DCPLastPower";
+            this.DCPLastPower.Size = new System.Drawing.Size(234, 22);
+            this.DCPLastPower.Text = "☆点我查看剩余电量☆";
+            this.DCPLastPower.Click += new System.EventHandler(this.DCPLastPower_Click);
+            // 
+            // DCPBindMyRoom
+            // 
+            this.DCPBindMyRoom.Name = "DCPBindMyRoom";
+            this.DCPBindMyRoom.Size = new System.Drawing.Size(234, 22);
+            this.DCPBindMyRoom.Text = "☆绑定一下我的房间☆";
+            this.DCPBindMyRoom.Click += new System.EventHandler(this.DCPBindMyRoom_Click);
+            // 
+            // DCPAuthor
+            // 
+            this.DCPAuthor.Name = "DCPAuthor";
+            this.DCPAuthor.Size = new System.Drawing.Size(234, 22);
+            this.DCPAuthor.Text = "☆哪个小天才设计的☆";
+            this.DCPAuthor.Click += new System.EventHandler(this.DCPAuthor_Click);
             // 
             // DCPExit
             // 
             this.DCPExit.Name = "DCPExit";
-            this.DCPExit.Size = new System.Drawing.Size(236, 22);
+            this.DCPExit.Size = new System.Drawing.Size(234, 22);
             this.DCPExit.Text = "☆这个绝不是退出键☆";
             this.DCPExit.Click += new System.EventHandler(this.DCPExit_Click);
             // 
@@ -312,6 +339,9 @@ namespace DesktopCleanPlan
         private System.Windows.Forms.ToolStripMenuItem DCPScreenshot;
         private System.Windows.Forms.ToolStripMenuItem DCPKyuu;
         private System.Windows.Forms.ToolStripMenuItem DCPDrcomTool;
+        private System.Windows.Forms.ToolStripMenuItem DCPCheckPower;
+        private System.Windows.Forms.ToolStripMenuItem DCPLastPower;
+        private System.Windows.Forms.ToolStripMenuItem DCPBindMyRoom;
     }
 }
 
