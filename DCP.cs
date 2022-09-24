@@ -2,13 +2,10 @@
 using System.IO;
 using System.Net;
 using System.Linq;
-using System.Text;
 using System.Drawing;
-using System.Reflection;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Net.NetworkInformation;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
@@ -30,13 +27,6 @@ namespace DesktopCleanPlan
         private List<IPAddress> ips = new List<IPAddress>();
         public static string userid = "";
         public static string passwd = "";
-        public static string cookie = "";
-        public static string clientIp = "";
-        public static string roomId = "";
-        public static string roomName = "";
-        public static string building = "";
-        private Dictionary<string, string> datas = new Dictionary<string, string>();
-        private int loopLock = 2;
         #endregion
 
         public DCP()
@@ -87,13 +77,13 @@ namespace DesktopCleanPlan
             if (System.IO.File.Exists(configPath))
             {
                 res = IMxldFile.IMxldRead(configPath, "0");
-                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
+                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd);
             }
             else
             {
                 FileStream c = System.IO.File.Create(configPath);
                 c.Close();
-                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
+                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd);
             }
         }
 
@@ -125,19 +115,11 @@ namespace DesktopCleanPlan
         //连接校园网
         public static void DrcomConnect(string userid, string passwd)
         {
-            string ip = ""; //为了通过编译
-            try
-            {
-                //ping校园网ip获得DHCP服务器分发的ip
-                System.Net.Sockets.TcpClient tcpClient = new System.Net.Sockets.TcpClient();
-                tcpClient.Connect("172.30.255.42", 80);
-                ip = ((IPEndPoint)tcpClient.Client.LocalEndPoint).Address.ToString();
-                tcpClient.Close();
-            }
-            catch (System.Net.Sockets.SocketException)
-            {
-                return; //在校外，直接跳出
-            }
+            //ping校园网ip获得DHCP服务器分发的ip
+            System.Net.Sockets.TcpClient tcpClient = new System.Net.Sockets.TcpClient();
+            tcpClient.Connect("172.30.255.42", 80);
+            string ip = ((IPEndPoint)tcpClient.Client.LocalEndPoint).Address.ToString();
+            tcpClient.Close();
 
             string drcomUrl = "http://172.30.255.42:801/eportal/portal/login?callback=dr1003&login_method=1&user_account=%2C0%2C" + userid + 
                 "&user_password=" + passwd +
@@ -189,7 +171,7 @@ namespace DesktopCleanPlan
                         .AddArgument("action", "viewConversation")
                         .AddArgument("conversationId", 1919810)
                         .AddText("校园网连接失败！有以下四种可能原因：")
-                        .AddText("1.账户或密码输入错误；2.该账户已经登录；3.没网费了；4.DCP被ban了（小概率事件）。")
+                        .AddText("1.账户或密码输入错误；2.该账户已经登录；3.您就没在咱校园里；4.DCP被ban了（小概率事件）。")
                         .AddText(DateTime.Now.ToString())
                         .Show(toast =>
                         {
@@ -201,7 +183,7 @@ namespace DesktopCleanPlan
             }
         }
 
-        //分发变量和初始化
+        //分发变量
         private void DistributeData(List<string> res)
         {
             folderPath = res[0];
@@ -209,21 +191,6 @@ namespace DesktopCleanPlan
             startup = res[2];
             userid = res[3];
             passwd = res[4];
-            cookie = res[5];
-            clientIp = res[6];
-            roomId = res[7];
-            roomName = res[8];
-            building = res[9];
-
-            datas["hiddenType"] = "";
-            datas["isHost"] = "";
-            datas["beginTime"] = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-            datas["endTime"] = DateTime.Now.ToString("yyyy-MM-dd");
-            datas["type"] = "2";
-            datas["client"] = clientIp;
-            datas["roomId"] = roomId;
-            datas["roomName"] = roomName;
-            datas["building"] = building;
         }
 
         //加载时
@@ -235,7 +202,7 @@ namespace DesktopCleanPlan
             if (System.IO.File.Exists(configPath))
             {
                 res = IMxldFile.IMxldRead(configPath, "0");
-                if (res.Count() != 10)
+                if (res.Count() != 5)
                 {
                     MessageBox.Show("检查到版本更新！配置文件将被重置！");
                     System.IO.File.Delete(configPath);
@@ -278,7 +245,7 @@ namespace DesktopCleanPlan
 
                 FileStream c = System.IO.File.Create(configPath);
                 c.Close();
-                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
+                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd);
             }
 
             //通知
@@ -298,12 +265,6 @@ namespace DesktopCleanPlan
             {
                 DrcomConnect(userid, passwd);
             }
-
-            try
-            {
-                DCPLastPower_Click(null, null);
-            }
-            catch { }
 
             //ips = GetByNetworkInterface();
             //Regex regex = new Regex(@"^((2((5[0-5])|([0-4]\d)))|([0-1]?\d{1,2}))(\.((2((5[0-5])|([0-4]\d)))|([0-1]?\d{1,2}))){3}$");
@@ -427,9 +388,6 @@ namespace DesktopCleanPlan
             this.DCPScreenshot.Text = "截图工具";
             this.DCPKyuu.Text = "计算器";
             this.DCPDrcomTool.Text = "登录校园网（深大特供）";
-            this.DCPCheckPower.Text = "查询剩余电量（深大特供）";
-            this.DCPLastPower.Text = "查看余电";
-            this.DCPBindMyRoom.Text = "绑定房间";
 
             style = "0";
             IMxldEdit();
@@ -470,9 +428,6 @@ namespace DesktopCleanPlan
             this.DCPScreenshot.Text = "☆自带截图工具在哪☆";
             this.DCPKyuu.Text = "☆琪露诺的算数教室☆";
             this.DCPDrcomTool.Text = "☆深带人专用小工具☆";
-            this.DCPCheckPower.Text = "☆咱们家还有电用吗☆";
-            this.DCPLastPower.Text = "☆点我查看剩余电量☆";
-            this.DCPBindMyRoom.Text = "☆绑定一下我的房间☆";
 
             style = "1";
             IMxldEdit();
@@ -703,139 +658,6 @@ namespace DesktopCleanPlan
             userid = value;
         }
         #endregion
-
-        //添加header
-        public void SetHeaderValue(WebHeaderCollection header, string name, string value)
-        {
-            var property = typeof(WebHeaderCollection).GetProperty("InnerCollection", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (property != null)
-            {
-                var collection = property.GetValue(header, null) as NameValueCollection;
-                collection[name] = value;
-            }
-        }
-
-        //向网站post
-        public string Post(string url, Dictionary<string, string> dic)
-        {
-            string result = "";
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            SetHeaderValue(req.Headers, "Cookie", cookie);
-            SetHeaderValue(req.Headers, "Host", "192.168.84.3:9090");
-            SetHeaderValue(req.Headers, "Origin", "http://192.168.84.3:9090");
-            SetHeaderValue(req.Headers, "Referer", "http://192.168.84.3:9090/cgcSims/login.do");
-            SetHeaderValue(req.Headers, "User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
-            #region 添加Post 参数
-            StringBuilder builder = new StringBuilder();
-            int i = 0;
-            foreach (var item in dic)
-            {
-                if (i > 0)
-                    builder.Append("&");
-                builder.AppendFormat("{0}={1}", item.Key, item.Value);
-                i++;
-            }
-            byte[] data = Encoding.UTF8.GetBytes(builder.ToString());
-            req.ContentLength = data.Length;
-            using (Stream reqStream = req.GetRequestStream())
-            {
-                reqStream.Write(data, 0, data.Length);
-                reqStream.Close();
-            }
-            #endregion
-            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-            Stream stream = resp.GetResponseStream();
-            //获取响应内容
-            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                result = reader.ReadToEnd();
-            }
-            return result;
-        }
-
-        #region 绑定房间
-        private void DCPBindMyRoom_Click(object sender, EventArgs e)
-        {
-            DCPSIMS simsWindows = new DCPSIMS();
-            //注册事件
-            simsWindows.CookieStr += SimsWindows_CookieStr;
-            simsWindows.ClientIpStr += SimsWindows_ClientIpStr;
-            simsWindows.RoomIdStr += SimsWindows_RoomIdStr;
-            simsWindows.RoomNameStr += SimsWindows_RoomNameStr;
-            simsWindows.BuildingStr += SimsWindows_BuildingStr;
-            simsWindows.ShowDialog();
-            IMxldEdit();
-        }
-
-        private void SimsWindows_BuildingStr(string value)
-        {
-            building = value;
-        }
-
-        private void SimsWindows_RoomNameStr(string value)
-        {
-            roomName = value;
-        }
-
-        private void SimsWindows_RoomIdStr(string value)
-        {
-            roomId =value;
-        }
-
-        private void SimsWindows_ClientIpStr(string value)
-        {
-            clientIp = value;
-        }
-
-        private void SimsWindows_CookieStr(string value)
-        {
-            cookie = value;
-        }
-        #endregion
-
-        //查询剩余电量
-        private void DCPLastPower_Click(object sender, EventArgs e)
-        {
-            //Process.Start(@"F:\visual studio 2019\code\SIMSQueryPowerConsumption\SIMSQueryPowerConsumption.py");
-            try
-            {
-                string powerResult = Post("http://192.168.84.3:9090/cgcSims/selectList.do", datas);
-                MatchCollection matchCol = Regex.Matches(powerResult, @"(?<=<td width=""13%"" align=""center"">)[\s\S]+?(?=</td>)");
-                Match match = Regex.Match(matchCol[2].Value, @"[\d\.]+");
-                if (Convert.ToSingle(match.Value) < 30)
-                {
-                    MessageBox.Show("剩余电量：" + match.Value, "余电查询");
-                    MessageBox.Show("该充电费啦！", "余电查询");
-                }
-                else
-                {
-                    MessageBox.Show("剩余电量：" + match.Value, "余电查询");
-                }
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                loopLock--;
-                if(loopLock <= 0)
-                {
-                    return;
-                }
-                //查不到今天就查昨天的凑合用
-                datas["beginTime"] = DateTime.Now.AddDays(-2).ToString("yyyy-MM-dd");
-                datas["endTime"] = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-                DCPLastPower_Click(null, null);
-            }
-            catch (System.Net.Sockets.SocketException) { /*在校外*/}
-            catch
-            {
-                MessageBox.Show("请先绑定房间再重试。\n如仍有疑问，请联系软件作者。", "警告");
-            }
-            finally
-            {
-                loopLock = 2;
-            }
-        }
     }
 
     //模拟用户输入类，弃用

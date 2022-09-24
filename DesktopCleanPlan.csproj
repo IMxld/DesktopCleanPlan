@@ -92,29 +92,14 @@
     <Compile Include="DCPDrcom.Designer.cs">
       <DependentUpon>DCPDrcom.cs</DependentUpon>
     </Compile>
-    <Compile Include="DCPSIMS.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DCPSIMS.Designer.cs">
-      <DependentUpon>DCPSIMS.cs</DependentUpon>
-    </Compile>
     <Compile Include="IMxldFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SIMSHelp.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="SIMSHelp.Designer.cs">
-      <DependentUpon>SIMSHelp.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="DCP.resx">
       <DependentUpon>DCP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DCPDrcom.resx">
       <DependentUpon>DCPDrcom.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DCPSIMS.resx">
-      <DependentUpon>DCPSIMS.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -126,9 +111,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SIMSHelp.resx">
-      <DependentUpon>SIMSHelp.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
