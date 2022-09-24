@@ -40,7 +40,7 @@ namespace DesktopCleanPlan
 
         //注册（传参）事件
         public event GiveDrcomUser UserId;
-        public event GiveDrcomUser Passwd;
+        public event GiveDrcomPasswd Passwd;
         private void DCPDrcomSave_Click(object sender, EventArgs e)
         {
             UserId(DCPDrcomUser.Text);
