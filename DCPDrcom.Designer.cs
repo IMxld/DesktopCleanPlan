@@ -46,7 +46,7 @@ namespace DesktopCleanPlan
             this.DCPDrcomSave.Location = new System.Drawing.Point(318, 253);
             this.DCPDrcomSave.Name = "DCPDrcomSave";
             this.DCPDrcomSave.Size = new System.Drawing.Size(91, 32);
-            this.DCPDrcomSave.TabIndex = 0;
+            this.DCPDrcomSave.TabIndex = 5;
             this.DCPDrcomSave.Text = "保存并关闭";
             this.DCPDrcomSave.UseVisualStyleBackColor = true;
             this.DCPDrcomSave.Click += new System.EventHandler(this.DCPDrcomSave_Click);
@@ -84,7 +84,7 @@ namespace DesktopCleanPlan
             this.Notice.Location = new System.Drawing.Point(356, 155);
             this.Notice.Name = "Notice";
             this.Notice.Size = new System.Drawing.Size(53, 12);
-            this.Notice.TabIndex = 5;
+            this.Notice.TabIndex = 1;
             this.Notice.TabStop = true;
             this.Notice.Text = "免责声明";
             this.Notice.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Notice_LinkClicked);
@@ -96,7 +96,7 @@ namespace DesktopCleanPlan
             this.User.Font = new System.Drawing.Font("楷体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.User.Location = new System.Drawing.Point(212, 194);
             this.User.Name = "User";
-            this.User.Size = new System.Drawing.Size(40, 16);
+            this.User.Size = new System.Drawing.Size(39, 16);
             this.User.TabIndex = 6;
             this.User.Text = "账户";
             // 
@@ -107,7 +107,7 @@ namespace DesktopCleanPlan
             this.Pass.Font = new System.Drawing.Font("楷体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Pass.Location = new System.Drawing.Point(212, 231);
             this.Pass.Name = "Pass";
-            this.Pass.Size = new System.Drawing.Size(40, 16);
+            this.Pass.Size = new System.Drawing.Size(39, 16);
             this.Pass.TabIndex = 7;
             this.Pass.Text = "密码";
             // 
@@ -117,7 +117,7 @@ namespace DesktopCleanPlan
             this.Github.Location = new System.Drawing.Point(368, 132);
             this.Github.Name = "Github";
             this.Github.Size = new System.Drawing.Size(41, 12);
-            this.Github.TabIndex = 8;
+            this.Github.TabIndex = 0;
             this.Github.TabStop = true;
             this.Github.Text = "GIthub";
             this.Github.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.Github_LinkClicked);

@@ -54,10 +54,11 @@ namespace DesktopCleanPlan
             this.DCPWeather = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPScreenshot = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPKyuu = new System.Windows.Forms.ToolStripMenuItem();
-            this.DCPDrcomTool = new System.Windows.Forms.ToolStripMenuItem();
+            this.DCPClock = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPCheckPower = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPLastPower = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPBindMyRoom = new System.Windows.Forms.ToolStripMenuItem();
+            this.DCPDrcomTool = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPAuthor = new System.Windows.Forms.ToolStripMenuItem();
             this.DCPExit = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
@@ -82,12 +83,10 @@ namespace DesktopCleanPlan
             this.DCPStyle,
             this.DCPStartup,
             this.DCPMaid,
-            this.DCPCheckPower,
-            this.DCPDrcomTool,
             this.DCPAuthor,
             this.DCPExit});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(235, 224);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(235, 158);
             // 
             // DCPHelp
             // 
@@ -163,7 +162,10 @@ namespace DesktopCleanPlan
             this.DCPIpv6,
             this.DCPWeather,
             this.DCPScreenshot,
-            this.DCPKyuu});
+            this.DCPKyuu,
+            this.DCPClock,
+            this.DCPCheckPower,
+            this.DCPDrcomTool});
             this.DCPMaid.Name = "DCPMaid";
             this.DCPMaid.Size = new System.Drawing.Size(234, 22);
             this.DCPMaid.Text = "☆好像有个妹抖来着☆";
@@ -252,12 +254,12 @@ namespace DesktopCleanPlan
             this.DCPKyuu.Text = "☆琪露诺的算数教室☆";
             this.DCPKyuu.Click += new System.EventHandler(this.DCPKyuu_Click);
             // 
-            // DCPDrcomTool
+            // DCPClock
             // 
-            this.DCPDrcomTool.Name = "DCPDrcomTool";
-            this.DCPDrcomTool.Size = new System.Drawing.Size(234, 22);
-            this.DCPDrcomTool.Text = "☆深带人专用小工具☆";
-            this.DCPDrcomTool.Click += new System.EventHandler(this.DCPDrcomTool_Click);
+            this.DCPClock.Name = "DCPClock";
+            this.DCPClock.Size = new System.Drawing.Size(234, 22);
+            this.DCPClock.Text = "☆一个很有趣的闹钟☆";
+            this.DCPClock.Click += new System.EventHandler(this.DCPClock_Click);
             // 
             // DCPCheckPower
             // 
@@ -282,6 +284,13 @@ namespace DesktopCleanPlan
             this.DCPBindMyRoom.Text = "☆绑定一下我的房间☆";
             this.DCPBindMyRoom.Click += new System.EventHandler(this.DCPBindMyRoom_Click);
             // 
+            // DCPDrcomTool
+            // 
+            this.DCPDrcomTool.Name = "DCPDrcomTool";
+            this.DCPDrcomTool.Size = new System.Drawing.Size(234, 22);
+            this.DCPDrcomTool.Text = "☆深带人专用小工具☆";
+            this.DCPDrcomTool.Click += new System.EventHandler(this.DCPDrcomTool_Click);
+            // 
             // DCPAuthor
             // 
             this.DCPAuthor.Name = "DCPAuthor";
@@ -301,6 +310,7 @@ namespace DesktopCleanPlan
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(136, 122);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "DCP";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -342,6 +352,7 @@ namespace DesktopCleanPlan
         private System.Windows.Forms.ToolStripMenuItem DCPCheckPower;
         private System.Windows.Forms.ToolStripMenuItem DCPLastPower;
         private System.Windows.Forms.ToolStripMenuItem DCPBindMyRoom;
+        private System.Windows.Forms.ToolStripMenuItem DCPClock;
     }
 }
 

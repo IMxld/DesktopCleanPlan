@@ -4,8 +4,10 @@ using System.Net;
 using System.Linq;
 using System.Text;
 using System.Drawing;
+using System.Threading;
 using System.Reflection;
 using System.Diagnostics;
+using System.Configuration;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -22,21 +24,12 @@ namespace DesktopCleanPlan
     public partial class DCP : Form
     {
         #region 一些变量
-        private string folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-        private string style = "1";
-        private string startup = "0";
-        private List<string> res = new List<string>();
-        private string configPath = Application.StartupPath + "\\DCPconfig.imxld";
-        private List<IPAddress> ips = new List<IPAddress>();
-        public static string userid = "";
-        public static string passwd = "";
-        public static string cookie = "";
-        public static string clientIp = "";
-        public static string roomId = "";
-        public static string roomName = "";
-        public static string building = "";
+        //private List<string> res = new List<string>();
+        private string configPath = Application.StartupPath + "\\DCPconfig.json";
+        //private List<IPAddress> ips = new List<IPAddress>();
         private Dictionary<string, string> datas = new Dictionary<string, string>();
         private int loopLock = 2;
+        private static bool stayAtSchool = true;
         #endregion
 
         public DCP()
@@ -58,69 +51,9 @@ namespace DesktopCleanPlan
         [DllImportAttribute("shell32.dll")]          //声明API函数
         private static extern int SHEmptyRecycleBin(IntPtr handle, string root, int falgs);
 
-        //创建桌面和开始菜单快捷方式，暂时弃用
-        private bool CrtShortCut(string FilePath, string fileName)
-        {
-            WshShell shell = new WshShell();
-
-            //创建桌面快捷方式
-            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\" + fileName + ".lnk");
-            shortcut.TargetPath = FilePath;
-            shortcut.WorkingDirectory = Environment.CurrentDirectory;
-            shortcut.WindowStyle = 1;
-            shortcut.Description = fileName;
-            shortcut.Save();
-
-            //创建开始菜单快捷方式
-            IWshShortcut shortcut1 = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + "\\" + fileName + ".lnk");
-            shortcut1.TargetPath = FilePath;
-            shortcut1.WorkingDirectory = Environment.CurrentDirectory;
-            shortcut1.WindowStyle = 1;
-            shortcut1.Description = fileName;
-            shortcut1.Save();
-            return true;
-        }
-
-        //如果不存在DCPconfig.imxld
-        private void IMxldEdit()
-        {
-            if (System.IO.File.Exists(configPath))
-            {
-                res = IMxldFile.IMxldRead(configPath, "0");
-                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
-            }
-            else
-            {
-                FileStream c = System.IO.File.Create(configPath);
-                c.Close();
-                IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
-            }
-        }
-
-        //无论网络通不通都能获取到Ip，暂时弃用
-        public static List<IPAddress> GetByNetworkInterface()
-        {
-            try
-            {
-                NetworkInterface[] intf = NetworkInterface.GetAllNetworkInterfaces();
-                List<IPAddress> ls = new List<IPAddress>();
-                foreach (NetworkInterface item in intf)
-                {
-                    IPInterfaceProperties adapterPropertis = item.GetIPProperties();
-                    UnicastIPAddressInformationCollection coll = adapterPropertis.UnicastAddresses;
-                    foreach (UnicastIPAddressInformation col in coll)
-                    {
-                        ls.Add(col.Address);
-                    }
-                }
-                return ls;
-            }
-            catch (Exception)
-            {
-                return new List<IPAddress>();
-
-            }
-        }
+        //判断网络状况的方法,返回值true为连接，false为未连接  
+        [DllImport("wininet")]
+        public extern static bool InternetGetConnectedState(out int conState, int reder);
 
         //连接校园网
         public static void DrcomConnect(string userid, string passwd)
@@ -136,6 +69,7 @@ namespace DesktopCleanPlan
             }
             catch (System.Net.Sockets.SocketException)
             {
+                stayAtSchool = false;
                 return; //在校外，直接跳出
             }
 
@@ -201,29 +135,10 @@ namespace DesktopCleanPlan
             }
         }
 
-        //分发变量和初始化
-        private void DistributeData(List<string> res)
+        //闹钟中控
+        public void ClockCenterControll()
         {
-            folderPath = res[0];
-            style = res[1];
-            startup = res[2];
-            userid = res[3];
-            passwd = res[4];
-            cookie = res[5];
-            clientIp = res[6];
-            roomId = res[7];
-            roomName = res[8];
-            building = res[9];
 
-            datas["hiddenType"] = "";
-            datas["isHost"] = "";
-            datas["beginTime"] = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
-            datas["endTime"] = DateTime.Now.ToString("yyyy-MM-dd");
-            datas["type"] = "2";
-            datas["client"] = clientIp;
-            datas["roomId"] = roomId;
-            datas["roomName"] = roomName;
-            datas["building"] = building;
         }
 
         //加载时
@@ -232,6 +147,7 @@ namespace DesktopCleanPlan
             this.DCPNo.Checked = true;
             this.DCPEight.Checked = true;
 
+            /*以前用读取imxld文件的方式
             if (System.IO.File.Exists(configPath))
             {
                 res = IMxldFile.IMxldRead(configPath, "0");
@@ -248,6 +164,7 @@ namespace DesktopCleanPlan
                     res = IMxldFile.IMxldRead(configPath, "0");
                 }
                 DistributeData(res);
+
                 switch (style)
                 {
                     case "0":
@@ -280,6 +197,37 @@ namespace DesktopCleanPlan
                 c.Close();
                 IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
             }
+            */
+
+            if (!System.IO.File.Exists(configPath))
+            {
+                FileStream c = System.IO.File.Create(configPath);
+                c.Close();
+                c.Dispose();
+                JsonConfig.WriteJson();
+            }
+
+            //DistributeData();
+            JsonConfig.DistributeData();
+
+            switch (DCPSettings.style)
+            {
+                case "0":
+                    DCPSimple_Click(null, null);
+                    break;
+                case "1":
+                    DCPEight_Click(null, null);
+                    break;
+            }
+            switch (DCPSettings.startup)
+            {
+                case "0":
+                    DCPNo_Click(null, null);
+                    break;
+                case "1":
+                    DCPYes_Click(null, null);
+                    break;
+            }
 
             //通知
             new ToastContentBuilder()
@@ -293,28 +241,27 @@ namespace DesktopCleanPlan
                     toast.ExpirationTime = DateTime.Now.AddSeconds(5);
                 });
 
-            if (userid.Equals("") || passwd.Equals("")) { }
-            else
+
+
+            //人在学校再开启该功能
+            if (stayAtSchool)
             {
-                DrcomConnect(userid, passwd);
+                if (DCPSettings.userid.Equals("") || DCPSettings.passwd.Equals("")) { }
+                else
+                {
+                    DrcomConnect(DCPSettings.userid, DCPSettings.passwd);
+                }
+
+                try
+                {
+                    DCPLastPower_Click(null, null);
+                }
+                catch { }
             }
 
-            try
-            {
-                DCPLastPower_Click(null, null);
-            }
-            catch { }
-
-            //ips = GetByNetworkInterface();
-            //Regex regex = new Regex(@"^((2((5[0-5])|([0-4]\d)))|([0-1]?\d{1,2}))(\.((2((5[0-5])|([0-4]\d)))|([0-1]?\d{1,2}))){3}$");
-            //foreach (IPAddress ip in ips)
-            //{
-            //    if (regex.IsMatch(ip.ToString()))
-            //    {
-            //        MessageBox.Show(ip.ToString());
-            //        //break;
-            //    }
-            //}
+            //开启闹钟线程
+            Thread clock = new Thread(ClockCenterControll);
+            clock.Start();
         }
 
         //退出键
@@ -326,9 +273,14 @@ namespace DesktopCleanPlan
         //点击透明窗口
         private void DCP_MouseClick(object sender, MouseEventArgs e)
         {
+            //读取注册表项
+            //RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\IMxld\\DCP", true);
+            //folderPath = registryKey.GetValue("OpenFolderPath").ToString();
+            //registryKey.Close();
+
             //打开文件夹
             //string strpath = @"D:\DesktopCleanPlan";
-            Process.Start("explorer.exe", folderPath);
+            Process.Start("explorer.exe", DCPSettings.folderPath);
         }
 
         //选择快捷打开的文件夹
@@ -337,26 +289,16 @@ namespace DesktopCleanPlan
             FolderBrowserDialog dlg = new FolderBrowserDialog();
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                folderPath = dlg.SelectedPath;
-                IMxldEdit();
-            }
+                DCPSettings.folderPath = dlg.SelectedPath;
+                JsonConfig.WriteJson();
+                //WriteConfig("folderPath", folderPath);
 
-            //if (File.Exists("DCPoption.config"))
-            //{
-            //    FileStream fs = new FileStream("DCPoption.config", FileMode.Open, FileAccess.Write);
-            //    byte[] vs = Encoding.UTF8.GetBytes(folderPath);
-            //    fs.Write(vs, 0, vs.Length);
-            //    fs.Close();
-            //}
-            //else
-            //{
-            //    FileStream c = File.Create("DCPoption.config");
-            //    c.Close();
-            //    FileStream fs = new FileStream("DCPoption.config", FileMode.Open, FileAccess.Write);
-            //    byte[] vs = Encoding.UTF8.GetBytes(folderPath);
-            //    fs.Write(vs, 0, vs.Length);
-            //    fs.Close();
-            //}
+                //RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\IMxld\\DCP", true);
+                //registryKey.SetValue("OpenFolderPath", folderPath);
+                //registryKey.Close();
+
+                dlg.Dispose();
+            }
         }
 
         //作者信息
@@ -406,8 +348,8 @@ namespace DesktopCleanPlan
         private void DCPSimple_Click(object sender, EventArgs e)
         {
             this.DCPStyle.Text = "风格设置";
-            this.DCPOption.Text = "更改目标文件夹";
-            this.DCPMaid.Text = "快捷操作";
+            this.DCPOption.Text = "更改文件夹";
+            this.DCPMaid.Text = "工具箱";
             this.DCPAuthor.Text = "作者";
             this.DCPExit.Text = "退出";
             this.DCPRubbish.Text = "清空回收站";
@@ -426,13 +368,15 @@ namespace DesktopCleanPlan
             this.DCPWeather.Text = "天气";
             this.DCPScreenshot.Text = "截图工具";
             this.DCPKyuu.Text = "计算器";
-            this.DCPDrcomTool.Text = "登录校园网（深大特供）";
-            this.DCPCheckPower.Text = "查询剩余电量（深大特供）";
+            this.DCPDrcomTool.Text = "登录校园网（Drcom）";
+            this.DCPCheckPower.Text = "查询剩余电量（SIMS）";
             this.DCPLastPower.Text = "查看余电";
             this.DCPBindMyRoom.Text = "绑定房间";
+            this.DCPClock.Text = "语音闹钟";
 
-            style = "0";
-            IMxldEdit();
+            DCPSettings.style = "0";
+            JsonConfig.WriteJson();
+            //WriteConfig("style", "0");
 
             if ((this.DCPSimple as ToolStripMenuItem).Checked)
             {
@@ -473,9 +417,11 @@ namespace DesktopCleanPlan
             this.DCPCheckPower.Text = "☆咱们家还有电用吗☆";
             this.DCPLastPower.Text = "☆点我查看剩余电量☆";
             this.DCPBindMyRoom.Text = "☆绑定一下我的房间☆";
+            this.DCPClock.Text = "☆一个很有趣的闹钟☆";
 
-            style = "1";
-            IMxldEdit();
+            DCPSettings.style = "1";
+            JsonConfig.WriteJson();
+            //WriteConfig("style", "1");
 
             if ((this.DCPEight as ToolStripMenuItem).Checked)
             {
@@ -501,12 +447,14 @@ namespace DesktopCleanPlan
                 (this.DCPNo as ToolStripMenuItem).Checked = false;
             }
 
-            startup = "1";
-            IMxldEdit();
+            DCPSettings.startup = "1";
+            JsonConfig.WriteJson();
+            //WriteConfig("startup", "1");
 
             //修改注册表
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             registryKey.SetValue("DCP", Application.ExecutablePath);
+            registryKey.Close();
         }
 
         //关闭开机自启动
@@ -522,12 +470,14 @@ namespace DesktopCleanPlan
                 (this.DCPNo as ToolStripMenuItem).Checked = true;
             }
 
-            startup = "0";
-            IMxldEdit();
+            DCPSettings.startup = "0";
+            JsonConfig.WriteJson();
+            //WriteConfig("startup", "0");
 
             //修改注册表
             RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
             registryKey.SetValue("DCP", false);
+            registryKey.Close();
         }
 
         //打开注册表
@@ -671,7 +621,7 @@ namespace DesktopCleanPlan
         //计算器
         private void DCPKyuu_Click(object sender, EventArgs e)
         {
-            if (style.Equals("1"))
+            if (DCPSettings.style.Equals("1"))
             {
                 MessageBox.Show("⑨");
             }
@@ -690,17 +640,20 @@ namespace DesktopCleanPlan
             drcomWindows.UserId += DrcomWindows_UserId;
             drcomWindows.Passwd += DrcomWindows_Passwd;
             drcomWindows.ShowDialog();
-            IMxldEdit();
+
+            JsonConfig.WriteJson();
+            //WriteConfig("userid", userid);
+            //WriteConfig("passwd", passwd);
         }
 
         private void DrcomWindows_Passwd(string value)
         {
-            passwd = value;
+            DCPSettings.passwd = value;
         }
 
         private void DrcomWindows_UserId(string value)
         {
-            userid = value;
+            DCPSettings.userid = value;
         }
         #endregion
 
@@ -720,7 +673,7 @@ namespace DesktopCleanPlan
         {
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            SetHeaderValue(req.Headers, "Cookie", cookie);
+            SetHeaderValue(req.Headers, "Cookie", DCPSettings.cookie);
             SetHeaderValue(req.Headers, "Host", "192.168.84.3:9090");
             SetHeaderValue(req.Headers, "Origin", "http://192.168.84.3:9090");
             SetHeaderValue(req.Headers, "Referer", "http://192.168.84.3:9090/cgcSims/login.do");
@@ -766,32 +719,38 @@ namespace DesktopCleanPlan
             simsWindows.RoomNameStr += SimsWindows_RoomNameStr;
             simsWindows.BuildingStr += SimsWindows_BuildingStr;
             simsWindows.ShowDialog();
-            IMxldEdit();
+
+            JsonConfig.WriteJson();
+            //WriteConfig("cookie", cookie);
+            //WriteConfig("clientIp", clientIp);
+            //WriteConfig("roomId", roomId);
+            //WriteConfig("roomName", roomName);
+            //WriteConfig("building", building);
         }
 
         private void SimsWindows_BuildingStr(string value)
         {
-            building = value;
+            DCPSettings.building = value;
         }
 
         private void SimsWindows_RoomNameStr(string value)
         {
-            roomName = value;
+            DCPSettings.roomName = value;
         }
 
         private void SimsWindows_RoomIdStr(string value)
         {
-            roomId =value;
+            DCPSettings.roomId =value;
         }
 
         private void SimsWindows_ClientIpStr(string value)
         {
-            clientIp = value;
+            DCPSettings.clientIp = value;
         }
 
         private void SimsWindows_CookieStr(string value)
         {
-            cookie = value;
+            DCPSettings.cookie = value;
         }
         #endregion
 
@@ -799,6 +758,16 @@ namespace DesktopCleanPlan
         private void DCPLastPower_Click(object sender, EventArgs e)
         {
             //Process.Start(@"F:\visual studio 2019\code\SIMSQueryPowerConsumption\SIMSQueryPowerConsumption.py");
+            datas["hiddenType"] = "";
+            datas["isHost"] = "";
+            datas["beginTime"] = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+            datas["endTime"] = DateTime.Now.ToString("yyyy-MM-dd");
+            datas["type"] = "2";
+            datas["client"] = DCPSettings.clientIp;
+            datas["roomId"] = DCPSettings.roomId;
+            datas["roomName"] = DCPSettings.roomName;
+            datas["building"] = DCPSettings.building;
+
             try
             {
                 string powerResult = Post("http://192.168.84.3:9090/cgcSims/selectList.do", datas);
@@ -819,6 +788,7 @@ namespace DesktopCleanPlan
                 loopLock--;
                 if(loopLock <= 0)
                 {
+                    MessageBox.Show("查询不到昨日甚至是两天内的用点记录！");
                     return;
                 }
                 //查不到今天就查昨天的凑合用
@@ -836,25 +806,175 @@ namespace DesktopCleanPlan
                 loopLock = 2;
             }
         }
+
+        //语音闹钟
+        private void DCPClock_Click(object sender, EventArgs e)
+        {
+            DCPClock clockWindows = new DCPClock();
+
+            clockWindows.ShowDialog();
+        }
+
+        #region 弃用的老代码
+        //创建桌面和开始菜单快捷方式，暂时弃用
+        //private bool CrtShortCut(string FilePath, string fileName)
+        //{
+        //    WshShell shell = new WshShell();
+
+        //    //创建桌面快捷方式
+        //    IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\" + fileName + ".lnk");
+        //    shortcut.TargetPath = FilePath;
+        //    shortcut.WorkingDirectory = Environment.CurrentDirectory;
+        //    shortcut.WindowStyle = 1;
+        //    shortcut.Description = fileName;
+        //    shortcut.Save();
+
+        //    //创建开始菜单快捷方式
+        //    IWshShortcut shortcut1 = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu) + "\\" + fileName + ".lnk");
+        //    shortcut1.TargetPath = FilePath;
+        //    shortcut1.WorkingDirectory = Environment.CurrentDirectory;
+        //    shortcut1.WindowStyle = 1;
+        //    shortcut1.Description = fileName;
+        //    shortcut1.Save();
+        //    return true;
+        //}
+
+        //编辑DCPconfig.imxld
+        //现改用app.config
+        //private void IMxldEdit()
+        //{
+        //    if (System.IO.File.Exists(configPath))
+        //    {
+        //        res = IMxldFile.IMxldRead(configPath, "0");
+        //        IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
+        //    }
+        //    else
+        //    {
+        //        FileStream c = System.IO.File.Create(configPath);
+        //        c.Close();
+        //        IMxldFile.IMxldWrite(configPath, "0", folderPath, style, startup, userid, passwd, cookie, clientIp, roomId, roomName, building);
+
+        //        //创建注册表
+        //        RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE", true);
+        //        registryKey.CreateSubKey("IMxld\\DCP");
+        //        registryKey.Close();
+        //    }
+        //}
+
+        //更改并保存config
+        //private void WriteConfig(string key, string value)
+        //{
+        //    Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        //    if (configuration.AppSettings.Settings[key] != null)
+        //    {
+        //        configuration.AppSettings.Settings[key].Value = value;
+        //    }
+        //    else
+        //    {
+        //        configuration.AppSettings.Settings.Add(key, value);
+        //    }
+        //    configuration.Save(ConfigurationSaveMode.Modified);
+        //    ConfigurationManager.RefreshSection("appSettings");
+        //}
+
+        //无论网络通不通都能获取到Ip，暂时弃用
+        //public static List<IPAddress> GetByNetworkInterface()
+        //{
+        //    try
+        //    {
+        //        NetworkInterface[] intf = NetworkInterface.GetAllNetworkInterfaces();
+        //        List<IPAddress> ls = new List<IPAddress>();
+        //        foreach (NetworkInterface item in intf)
+        //        {
+        //            IPInterfaceProperties adapterPropertis = item.GetIPProperties();
+        //            UnicastIPAddressInformationCollection coll = adapterPropertis.UnicastAddresses;
+        //            foreach (UnicastIPAddressInformation col in coll)
+        //            {
+        //                ls.Add(col.Address);
+        //            }
+        //        }
+        //        return ls;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return new List<IPAddress>();
+
+        //    }
+        //}
+
+        //分发变量和初始化
+        //private void DistributeData(List<string> res)
+        //{
+        //    folderPath = res[0];
+        //    style = res[1];
+        //    startup = res[2];
+
+        //    userid = res[3];
+        //    passwd = res[4];
+
+        //    cookie = res[5];
+        //    clientIp = res[6];
+        //    roomId = res[7];
+        //    roomName = res[8];
+        //    building = res[9];
+
+        //    datas["hiddenType"] = "";
+        //    datas["isHost"] = "";
+        //    datas["beginTime"] = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+        //    datas["endTime"] = DateTime.Now.ToString("yyyy-MM-dd");
+        //    datas["type"] = "2";
+        //    datas["client"] = clientIp;
+        //    datas["roomId"] = roomId;
+        //    datas["roomName"] = roomName;
+        //    datas["building"] = building;
+        //}
+
+        //读取app.config
+        //private void DistributeData()
+        //{
+        //    folderPath = ConfigurationManager.AppSettings.Get("folderPath");
+        //    style = ConfigurationManager.AppSettings.Get("style");
+        //    startup = ConfigurationManager.AppSettings.Get("startup");
+
+        //    userid = ConfigurationManager.AppSettings.Get("userid");
+        //    passwd = ConfigurationManager.AppSettings.Get("passwd");
+
+        //    cookie = ConfigurationManager.AppSettings.Get("cookie");
+        //    clientIp = ConfigurationManager.AppSettings.Get("clientIp");
+        //    roomId = ConfigurationManager.AppSettings.Get("roomId");
+        //    roomName = ConfigurationManager.AppSettings.Get("roomName");
+        //    building = ConfigurationManager.AppSettings.Get("building");
+
+        //    datas["hiddenType"] = "";
+        //    datas["isHost"] = "";
+        //    datas["beginTime"] = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd");
+        //    datas["endTime"] = DateTime.Now.ToString("yyyy-MM-dd");
+        //    datas["type"] = "2";
+        //    datas["client"] = clientIp;
+        //    datas["roomId"] = roomId;
+        //    datas["roomName"] = roomName;
+        //    datas["building"] = building;
+        //}
+        #endregion
     }
 
     //模拟用户输入类，弃用
-    static class KeyboardSend
-    {
-        [DllImport("user32.dll")]
-        private static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
+    //static class KeyboardSend
+    //{
+    //    [DllImport("user32.dll")]
+    //    private static extern void keybd_event(byte bVk, byte bScan, int dwFlags, int dwExtraInfo);
 
-        private const int KEYEVENTF_EXTENDEDKEY = 1;
-        private const int KEYEVENTF_KEYUP = 2;
+    //    private const int KEYEVENTF_EXTENDEDKEY = 1;
+    //    private const int KEYEVENTF_KEYUP = 2;
 
-        public static void KeyDown(Keys vKey)
-        {
-            keybd_event((byte)vKey, 0, KEYEVENTF_EXTENDEDKEY, 0);
-        }
+    //    public static void KeyDown(Keys vKey)
+    //    {
+    //        keybd_event((byte)vKey, 0, KEYEVENTF_EXTENDEDKEY, 0);
+    //    }
 
-        public static void KeyUp(Keys vKey)
-        {
-            keybd_event((byte)vKey, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
-        }
-    }
+    //    public static void KeyUp(Keys vKey)
+    //    {
+    //        keybd_event((byte)vKey, 0, KEYEVENTF_EXTENDEDKEY | KEYEVENTF_KEYUP, 0);
+    //    }
+    //}
 }

@@ -39,11 +39,11 @@ namespace DesktopCleanPlan
 
         private void DCPSIMS_Load(object sender, EventArgs e)
         {
-            DCPSIMSCookie.Text = DCP.cookie;
-            DCPSIMSClientIp.Text = DCP.clientIp;
-            DCPSIMSRoomId.Text = DCP.roomId;
-            DCPSIMSRoomName.Text = DCP.roomName;
-            DCPSIMSBuilding.Text = DCP.building;
+            DCPSIMSCookie.Text = DCPSettings.cookie;
+            DCPSIMSClientIp.Text = DCPSettings.clientIp;
+            DCPSIMSRoomId.Text = DCPSettings.roomId;
+            DCPSIMSRoomName.Text = DCPSettings.roomName;
+            DCPSIMSBuilding.Text = DCPSettings.building;
         }
 
         private void DCPSIMS_MouseDown(object sender, MouseEventArgs e)
@@ -66,6 +66,7 @@ namespace DesktopCleanPlan
             RoomNameStr(DCPSIMSRoomName.Text);
             BuildingStr(DCPSIMSBuilding.Text);
             this.Close();
+            this.Dispose();
         }
 
         private void Help_Click(object sender, EventArgs e)

@@ -22,6 +22,7 @@ namespace DesktopCleanPlan
         private void Mouse_Click(object sender, EventArgs e)
         {
             this.Close();
+            this.Dispose();
         }
     }
 }

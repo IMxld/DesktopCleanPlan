@@ -177,6 +177,7 @@
             this.Controls.Add(this.DCPSIMSRoomId);
             this.Controls.Add(this.DCPSIMSClientIp);
             this.Controls.Add(this.DCPSIMSCookie);
+            this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("楷体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DCPSIMS";

@@ -34,8 +34,8 @@ namespace DesktopCleanPlan
 
         private void DCPDrcom_Load(object sender, EventArgs e)
         {
-            DCPDrcomUser.Text = DCP.userid;
-            DCPDrcomPasswd.Text = DCP.passwd;
+            DCPDrcomUser.Text = DCPSettings.userid;
+            DCPDrcomPasswd.Text = DCPSettings.passwd;
         }
 
         //注册（传参）事件
@@ -46,6 +46,7 @@ namespace DesktopCleanPlan
             UserId(DCPDrcomUser.Text);
             Passwd(DCPDrcomPasswd.Text);
             this.Close();
+            this.Dispose();
         }
 
         private void DCPDrcomRetry_Click(object sender, EventArgs e)
@@ -55,7 +56,6 @@ namespace DesktopCleanPlan
 
         private void Github_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            MessageBox.Show("下个版本的时候我应该会把软件源代码放上去\n现在姑且是没有的");
             Process.Start("https://github.com/IMxld");
         }
 
